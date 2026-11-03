@@ -11,10 +11,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 include_directories(include)
 
-add_library(core src/geometry.cpp)
+add_library(core src/geometry.cpp src/io.cpp)
 
 add_executable(main_solver src/main_solver.cpp)
 target_link_libraries(main_solver core)
 
 add_executable(test_geometry tests/test_geometry.cpp)
 target_link_libraries(test_geometry core)
+
+add_executable(test_io tests/test_io.cpp)
+target_link_libraries(test_io core)
