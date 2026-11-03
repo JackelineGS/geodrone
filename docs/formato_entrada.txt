@@ -1,0 +1,9 @@
+SEED <semilla>   // semilla con la que se generó el caso
+CATEGORY <Small|Medium|Large|Extreme>
+<k> <m> <p>      // nº de clientes, estaciones, polígonos
+A <autonomía> KAPPA <κ> V <v> Q <Q> TAU <τ> KH <κh>
+BASE <x> <y>
+CLIENT <id> <x> <y> <prio> <obligatorio 0|1> <e> <l> <s> <demanda>   (k líneas)
+STATION <id> <x> <y>                                                 (m líneas)
+POLYGON <id> <nv> //seguido de nv líneas "x y" (p bloques)
+

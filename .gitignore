@@ -1,0 +1,9 @@
+build/
+cmake-build-*/
+bin/
+node_modules/
+dist/
+.idea/
+.vscode/
+*.o
+server/tmp/
