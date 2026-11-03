@@ -1,122 +1,59 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import { parseScenario, parseSolution } from './lib/parser';
+import MapView from './components/MapView';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [scenario, setScenario] = useState(null);
+  const [solution, setSolution] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/data/ejemplo.txt').then((r) => r.text()),
+      fetch('/data/ejemplo_salida.txt').then((r) => r.text()),
+    ])
+      .then(([inp, out]) => {
+        setScenario(parseScenario(inp));
+        setSolution(parseSolution(out));
+      })
+      .catch((e) => setError(String(e)));
+  }, []);
+
+  if (error) return <p className="msg">Error: {error}</p>;
+  if (!scenario || !solution) return <p className="msg">Cargando…</p>;
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app">
+      <header>
+        <h1>GeoDrone Logistics</h1>
+        <span>
+          {scenario.category} · semilla {scenario.seed}
+        </span>
+      </header>
 
-      <div className="ticks"></div>
+      <main>
+        <MapView scenario={scenario} solution={solution} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
+        <aside>
+          <h2>Resultado</h2>
+          <p><b>Estado:</b> {solution.status}</p>
+          <p><b>Costo:</b> {solution.cost}</p>
+          <p><b>Recargas:</b> {solution.recharges}</p>
+          <p><b>Tiempo:</b> {solution.timeMs} ms</p>
+          <p><b>Ruta:</b> {solution.route.join(' → ')}</p>
+
+          <h2>Leyenda</h2>
+          <ul className="legend">
+            <li><span className="ic base" /> Base</li>
+            <li><span className="ic client" /> Cliente obligatorio</li>
+            <li><span className="ic client opt" /> Cliente opcional</li>
+            <li><span className="ic station" /> Estación de recarga</li>
+            <li><span className="ic poly" /> Obstáculo</li>
+            <li><span className="ic route" /> Ruta</li>
           </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        </aside>
+      </main>
+    </div>
+  );
 }
-
-export default App
