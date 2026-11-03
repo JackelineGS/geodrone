@@ -15,3 +15,6 @@ add_library(core src/geometry.cpp)
 
 add_executable(main_solver src/main_solver.cpp)
 target_link_libraries(main_solver core)
+
+add_executable(test_geometry tests/test_geometry.cpp)
+target_link_libraries(test_geometry core)
