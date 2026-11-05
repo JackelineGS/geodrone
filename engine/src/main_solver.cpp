@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "scenario.hpp"
-#include "shortest_path.hpp"
+#include "solver_exact.hpp"
 #include "visibility.hpp"
 
 int main(int argc, char* argv[]) {
@@ -23,20 +23,7 @@ int main(int argc, char* argv[]) {
               << sc.stations.size() << " estaciones, " << sc.polygons.size() << " poligonos\n"
               << "Grafo de visibilidad: " << g.size() << " nodos, " << g.edgeCount() << " aristas\n";
 
-    // Diagnostico: distancia minima desde la base a cada cliente
-    ShortestPaths sp = dijkstra(g, g.indexOf("B"));
-    for (const Client& c : sc.clients) {
-        int v = g.indexOf("C" + std::to_string(c.id));
-        std::cerr << "  d(B, C" << c.id << ") = " << sp.dist[v] << "\n";
-    }
-
-    // Provisional: aun no hay solver; se imprime la salida de referencia del ejemplo.
-    Solution sol;
-    sol.status = "FEASIBLE";
-    sol.cost = 27.605;
-    sol.timeMs = 1;
-    sol.recharges = 1;
-    sol.route = {"B", "C2", "C1", "S1", "W1.1", "B"};
+    Solution sol = solveExact(sc, g);
     writeSolution(std::cout, sol);
-    return 0;
+    return sol.status == "FEASIBLE" ? 0 : 2;
 }

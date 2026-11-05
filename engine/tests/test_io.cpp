@@ -70,7 +70,7 @@ int main() {
     sol.cost = 27.605;
     sol.timeMs = 1;
     sol.recharges = 1;
-    sol.route = {"B", "C2", "C1", "S1", "W1.1", "B"};
+    sol.routes = {{"B", "C2", "C1", "S1", "W1.1", "B"}};
     std::ostringstream out;
     writeSolution(out, sol);
     CHECK(out.str() ==

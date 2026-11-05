@@ -39,7 +39,7 @@ struct Solution {
     long long timeMs = 0;
     int recharges = 0;
     int skipped = 0;
-    std::vector<std::string> route;  // B, C#, S#, W#.#
+    std::vector<std::vector<std::string>> routes;  // una ruta por viaje o dron: B, C#, S#, W#.#
 };
 
 // Lee un escenario. Devuelve false y llena err si el formato es inválido.

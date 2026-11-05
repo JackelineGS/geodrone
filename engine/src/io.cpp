@@ -196,7 +196,9 @@ void writeSolution(std::ostream& out, const Solution& sol) {
     out << "TIME_MS " << sol.timeMs << "\n";
     out << "RECHARGES " << sol.recharges << "\n";
     out << "SKIPPED " << sol.skipped << "\n";
-    out << "ROUTE " << sol.route.size() << "\n";
-    for (size_t i = 0; i < sol.route.size(); i++) out << (i ? " " : "") << sol.route[i];
-    out << "\n";
+    for (const auto& route : sol.routes) {
+        out << "ROUTE " << route.size() << "\n";
+        for (size_t i = 0; i < route.size(); i++) out << (i ? " " : "") << route[i];
+        out << "\n";
+    }
 }
