@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "scenario.hpp"
+#include "shortest_path.hpp"
 #include "visibility.hpp"
 
 int main(int argc, char* argv[]) {
@@ -21,6 +22,13 @@ int main(int argc, char* argv[]) {
     std::cerr << "Escenario " << sc.category << ": " << sc.clients.size() << " clientes, "
               << sc.stations.size() << " estaciones, " << sc.polygons.size() << " poligonos\n"
               << "Grafo de visibilidad: " << g.size() << " nodos, " << g.edgeCount() << " aristas\n";
+
+    // Diagnostico: distancia minima desde la base a cada cliente
+    ShortestPaths sp = dijkstra(g, g.indexOf("B"));
+    for (const Client& c : sc.clients) {
+        int v = g.indexOf("C" + std::to_string(c.id));
+        std::cerr << "  d(B, C" << c.id << ") = " << sp.dist[v] << "\n";
+    }
 
     // Provisional: aun no hay solver; se imprime la salida de referencia del ejemplo.
     Solution sol;

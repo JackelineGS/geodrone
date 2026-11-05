@@ -11,7 +11,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 
 include_directories(include)
 
-add_library(core src/geometry.cpp src/io.cpp src/visibility.cpp)
+add_library(core src/geometry.cpp src/io.cpp src/visibility.cpp src/shortest_path.cpp)
 
 add_executable(main_solver src/main_solver.cpp)
 target_link_libraries(main_solver core)
@@ -24,3 +24,6 @@ target_link_libraries(test_io core)
 
 add_executable(test_visibility tests/test_visibility.cpp)
 target_link_libraries(test_visibility core)
+
+add_executable(test_shortest_path tests/test_shortest_path.cpp)
+target_link_libraries(test_shortest_path core)
