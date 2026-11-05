@@ -19,6 +19,8 @@ export default function App() {
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [reach, setReach] = useState(null);
+  const [showReach, setShowReach] = useState(true);
 
   // Lista de escenarios disponibles
   useEffect(() => {
@@ -43,6 +45,20 @@ export default function App() {
       cancelled = true;
     };
   }, [name]);
+
+  // Alcance (seccion 3.4): lo calcula el motor con --reach
+  useEffect(() => {
+    if (!text) return;
+    let cancelled = false;
+    setReach(null);
+    fetch('/api/reach', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: text })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => !cancelled && setReach(d))
+      .catch(() => !cancelled && setReach(null));
+    return () => {
+      cancelled = true;
+    };
+  }, [text]);
 
   function choose(newName) {
     setName(newName);
@@ -107,7 +123,7 @@ export default function App() {
       {note && <p className="msg warn">{note}</p>}
 
       <main>
-        <MapView scenario={scenario} solution={solution} />
+        <MapView scenario={scenario} solution={solution} reach={showReach ? reach : null} />
 
         <aside>
           <h2>Resultado</h2>
@@ -132,6 +148,26 @@ export default function App() {
                   <pre>{stderr}</pre>
                 </details>
               )}
+            </>
+          )}
+
+          <h2>Alcance</h2>
+          {!reach && <p>Sin datos de alcance (¿API apagada?).</p>}
+          {reach && (
+            <>
+              <label>
+                <input type="checkbox" checked={showReach} onChange={(e) => setShowReach(e.target.checked)} /> Mostrar área
+              </label>
+              <p><b>Radio:</b> {reach.radius == null ? '—' : reach.radius.toFixed(2)}</p>
+              <p><b>Red de recarga:</b> {reach.network.join(', ')}</p>
+              {reach.isolated.length > 0 && <p><b>Estaciones aisladas:</b> {reach.isolated.join(', ')}</p>}
+              <ul className="reach">
+                {reach.clients.map((c) => (
+                  <li key={c.id} className={c.reachable ? 'ok' : 'bad'}>
+                    C{c.id}: {c.reachable ? (c.direct ? 'directo' : `con recarga en ${c.via}`) : 'inalcanzable'}
+                  </li>
+                ))}
+              </ul>
             </>
           )}
 

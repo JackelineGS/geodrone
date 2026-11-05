@@ -2,7 +2,7 @@ import { resolveRoute } from '../lib/parser';
 
 const COLORS = ['#f59e0b', '#7c3aed', '#0891b2', '#db2777', '#65a30d'];
 
-export default function MapView({ scenario, solution }) {
+export default function MapView({ scenario, solution, reach }) {
   // Todos los puntos, para calcular los limites del dibujo
   const pts = [
     scenario.base,
@@ -27,11 +27,33 @@ export default function MapView({ scenario, solution }) {
 
   const routes = solution ? solution.routes.map((ids) => resolveRoute(scenario, ids)) : [];
 
+  const bad = (id) => !!reach && reach.clients.some((c) => c.id === id && !c.reachable);
+
   const label = { fontSize: u * 0.7, textAnchor: 'middle', fontFamily: 'sans-serif' };
 
   return (
     <svg viewBox={vb} className="map" role="img" aria-label="Mapa de la misión">
       <rect x={minX - pad} y={minY - pad} width={maxX - minX + 2 * pad} height={maxY - minY + 2 * pad} fill="#f8fafc" />
+
+      {/* Area de alcance: circulo de radio A/(2k) en la base y en cada estacion de la red.
+          Es una cota (en linea recta); con obstaculos el alcance real es menor. */}
+      {reach && reach.radius != null &&
+        reach.network.map((lab) => {
+          const p = lab === 'B' ? scenario.base : scenario.stations.find((s) => `S${s.id}` === lab);
+          if (!p) return null;
+          return (
+            <circle
+              key={`reach${lab}`}
+              cx={p.x}
+              cy={sy(p.y)}
+              r={reach.radius}
+              fill="rgba(34,197,94,0.10)"
+              stroke="#16a34a"
+              strokeWidth={u / 12}
+              strokeDasharray={`${u / 2} ${u / 3}`}
+            />
+          );
+        })}
 
       {/* Obstáculos */}
       {scenario.polygons.map((poly) => (
@@ -92,7 +114,7 @@ export default function MapView({ scenario, solution }) {
       {scenario.clients.map((c) => (
         <g key={`c${c.id}`}>
           <title>{`Cliente C${c.id} · prioridad ${c.prio} · ${c.mandatory ? 'obligatorio' : 'opcional'}`}</title>
-          <circle cx={c.x} cy={sy(c.y)} r={u * 0.9} fill={c.mandatory ? '#2563eb' : '#fff'} stroke="#1e3a8a" strokeWidth={u / 8} />
+          <circle cx={c.x} cy={sy(c.y)} r={u * 0.9} fill={c.mandatory ? '#2563eb' : '#fff'} stroke={bad(c.id) ? '#dc2626' : '#1e3a8a'} strokeWidth={bad(c.id) ? u / 4 : u / 8} />
           <text x={c.x} y={sy(c.y) + u * 0.25} {...label} fill={c.mandatory ? '#fff' : '#1e3a8a'}>{`C${c.id}`}</text>
         </g>
       ))}

@@ -25,3 +25,7 @@ aside p { margin: 4px 0; }
 .msg.err { color: #b91c1c; padding: 4px 0; }
 .msg.warn { color: #92400e; padding: 4px 0; }
 aside pre { white-space: pre-wrap; font-size: .8rem; background: #f3f4f6; padding: 8px; border-radius: 6px; }
+
+.reach { list-style: none; padding: 0; margin: 4px 0; font-size: .9rem; }
+.reach .ok { color: #166534; }
+.reach .bad { color: #b91c1c; font-weight: 600; }
