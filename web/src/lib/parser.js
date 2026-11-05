@@ -54,14 +54,14 @@ export function parseScenario(text) {
   return sc;
 }
 
-// Lee el archivo de salida del solver
+// Lee el archivo de salida del solver (puede traer varios bloques ROUTE)
 export function parseSolution(text) {
   const lines = text
     .split(/\r?\n/)
     .map((l) => l.replace(/\/\/.*$/, '').trim())
     .filter(Boolean);
 
-  const sol = { status: '', cost: null, timeMs: null, recharges: 0, skipped: 0, route: [] };
+  const sol = { status: '', cost: null, timeMs: null, recharges: 0, skipped: 0, routes: [] };
 
   for (let i = 0; i < lines.length; i++) {
     const t = lines[i].split(/\s+/);
@@ -71,7 +71,7 @@ export function parseSolution(text) {
     else if (t[0] === 'RECHARGES') sol.recharges = Number(t[1]);
     else if (t[0] === 'SKIPPED') sol.skipped = Number(t[1]);
     else if (t[0] === 'ROUTE') {
-      sol.route = (lines[i + 1] || '').split(/\s+/).filter(Boolean);
+      sol.routes.push((lines[i + 1] || '').split(/\s+/).filter(Boolean));
       i++;
     }
   }

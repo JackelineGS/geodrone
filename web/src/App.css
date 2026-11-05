@@ -17,3 +17,11 @@ aside p { margin: 4px 0; }
 .ic.poly { background: rgba(220,38,38,.3); border: 2px solid #dc2626; box-sizing: border-box; }
 .ic.route { height: 4px; background: #f59e0b; align-self: center; }
 .msg { padding: 24px; }
+
+.controls { margin-left: auto; display: flex; gap: 8px; }
+.controls select, .controls button { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; font: inherit; }
+.controls button { background: #2563eb; color: #fff; border-color: #1d4ed8; cursor: pointer; }
+.controls button:disabled { opacity: .6; cursor: wait; }
+.msg.err { color: #b91c1c; padding: 4px 0; }
+.msg.warn { color: #92400e; padding: 4px 0; }
+aside pre { white-space: pre-wrap; font-size: .8rem; background: #f3f4f6; padding: 8px; border-radius: 6px; }

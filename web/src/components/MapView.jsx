@@ -1,7 +1,9 @@
 import { resolveRoute } from '../lib/parser';
 
+const COLORS = ['#f59e0b', '#7c3aed', '#0891b2', '#db2777', '#65a30d'];
+
 export default function MapView({ scenario, solution }) {
-  // Todos los puntos, para calcular los límites del dibujo
+  // Todos los puntos, para calcular los limites del dibujo
   const pts = [
     scenario.base,
     ...scenario.clients,
@@ -23,8 +25,7 @@ export default function MapView({ scenario, solution }) {
   const sy = (y) => maxY + minY - y;
   const vb = [minX - pad, minY - pad, maxX - minX + 2 * pad, maxY - minY + 2 * pad].join(' ');
 
-  const route = solution ? resolveRoute(scenario, solution.route) : [];
-  const routePath = route.map((p) => `${p.x},${sy(p.y)}`).join(' ');
+  const routes = solution ? solution.routes.map((ids) => resolveRoute(scenario, ids)) : [];
 
   const label = { fontSize: u * 0.7, textAnchor: 'middle', fontFamily: 'sans-serif' };
 
@@ -49,17 +50,29 @@ export default function MapView({ scenario, solution }) {
         </g>
       ))}
 
-      {/* Ruta */}
-      {route.length > 1 && (
-        <polyline points={routePath} fill="none" stroke="#f59e0b" strokeWidth={u / 6} strokeLinejoin="round" strokeLinecap="round" />
-      )}
-
-      {/* Puntos de paso en vértices de obstáculos */}
-      {route
-        .filter((p) => p.type === 'waypoint')
-        .map((p, i) => (
-          <circle key={`w${i}`} cx={p.x} cy={sy(p.y)} r={u * 0.3} fill="#fff" stroke="#f59e0b" strokeWidth={u / 8} />
-        ))}
+      {/* Rutas: una por color */}
+      {routes.map((route, k) => {
+        const color = COLORS[k % COLORS.length];
+        return (
+          <g key={`route${k}`}>
+            {route.length > 1 && (
+              <polyline
+                points={route.map((p) => `${p.x},${sy(p.y)}`).join(' ')}
+                fill="none"
+                stroke={color}
+                strokeWidth={u / 6}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+            )}
+            {route
+              .filter((p) => p.type === 'waypoint')
+              .map((p, i) => (
+                <circle key={`w${i}`} cx={p.x} cy={sy(p.y)} r={u * 0.3} fill="#fff" stroke={color} strokeWidth={u / 8} />
+              ))}
+          </g>
+        );
+      })}
 
       {/* Estaciones de recarga: triángulo verde */}
       {scenario.stations.map((s) => {
@@ -79,14 +92,7 @@ export default function MapView({ scenario, solution }) {
       {scenario.clients.map((c) => (
         <g key={`c${c.id}`}>
           <title>{`Cliente C${c.id} · prioridad ${c.prio} · ${c.mandatory ? 'obligatorio' : 'opcional'}`}</title>
-          <circle
-            cx={c.x}
-            cy={sy(c.y)}
-            r={u * 0.9}
-            fill={c.mandatory ? '#2563eb' : '#fff'}
-            stroke="#1e3a8a"
-            strokeWidth={u / 8}
-          />
+          <circle cx={c.x} cy={sy(c.y)} r={u * 0.9} fill={c.mandatory ? '#2563eb' : '#fff'} stroke="#1e3a8a" strokeWidth={u / 8} />
           <text x={c.x} y={sy(c.y) + u * 0.25} {...label} fill={c.mandatory ? '#fff' : '#1e3a8a'}>{`C${c.id}`}</text>
         </g>
       ))}
