@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "scenario.hpp"
+#include "visibility.hpp"
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -16,8 +17,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    VisibilityGraph g = buildVisibilityGraph(sc);
     std::cerr << "Escenario " << sc.category << ": " << sc.clients.size() << " clientes, "
-              << sc.stations.size() << " estaciones, " << sc.polygons.size() << " poligonos\n";
+              << sc.stations.size() << " estaciones, " << sc.polygons.size() << " poligonos\n"
+              << "Grafo de visibilidad: " << g.size() << " nodos, " << g.edgeCount() << " aristas\n";
 
     // Provisional: aun no hay solver; se imprime la salida de referencia del ejemplo.
     Solution sol;
