@@ -82,6 +82,28 @@ app.post('/api/reach', async (req, res) => {
   });
 });
 
+// Autonomia minima factible (busqueda binaria en el motor, --min-autonomy)
+app.post('/api/min-autonomy', async (req, res) => {
+  const text = typeof req.body === 'string' ? req.body : '';
+  if (!text.trim()) return res.status(400).json({ error: 'cuerpo vacio: se esperaba el escenario como texto' });
+
+  await fs.mkdir(TMP_DIR, { recursive: true });
+  const file = path.join(TMP_DIR, `${Date.now()}-${crypto.randomBytes(4).toString('hex')}.txt`);
+  await fs.writeFile(file, text);
+
+  execFile(SOLVER, ['--min-autonomy', file], { timeout: 15000, maxBuffer: 10 * 1024 * 1024 }, async (error, stdout, stderr) => {
+    await fs.unlink(file).catch(() => {});
+    if (error && error.code === 'ENOENT') {
+      return res.status(500).json({ error: 'No existe bin/main_solver: compila el motor primero' });
+    }
+    try {
+      res.json(JSON.parse(stdout));
+    } catch {
+      res.status(500).json({ error: error ? error.message : 'salida invalida del motor', stderr });
+    }
+  });
+});
+
 app.listen(3001, '127.0.0.1', () => {
   console.log('API de GeoDrone escuchando en http://127.0.0.1:3001');
 });

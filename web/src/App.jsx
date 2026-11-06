@@ -20,6 +20,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [reach, setReach] = useState(null);
+  const [minA, setMinA] = useState(null);
   const [showReach, setShowReach] = useState(true);
 
   // Lista de escenarios disponibles
@@ -55,6 +56,20 @@ export default function App() {
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => !cancelled && setReach(d))
       .catch(() => !cancelled && setReach(null));
+    return () => {
+      cancelled = true;
+    };
+  }, [text]);
+
+  // Autonomia minima (RF10): busqueda binaria en el motor
+  useEffect(() => {
+    if (!text) return;
+    let cancelled = false;
+    setMinA(null);
+    fetch('/api/min-autonomy', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: text })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => !cancelled && setMinA(d))
+      .catch(() => !cancelled && setMinA(null));
     return () => {
       cancelled = true;
     };
@@ -160,6 +175,12 @@ export default function App() {
               </label>
               <p><b>Radio:</b> {reach.radius == null ? '—' : reach.radius.toFixed(2)}</p>
               <p><b>Red de recarga:</b> {reach.network.join(', ')}</p>
+              {minA && (
+                <p>
+                  <b>Autonomía mínima:</b>{' '}
+                  {minA.feasible ? `${minA.minAutonomy.toFixed(2)} (margen ${minA.margin.toFixed(2)})` : 'ninguna alcanza'}
+                </p>
+              )}
               {reach.isolated.length > 0 && <p><b>Estaciones aisladas:</b> {reach.isolated.join(', ')}</p>}
               <ul className="reach">
                 {reach.clients.map((c) => (
