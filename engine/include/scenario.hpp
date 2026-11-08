@@ -51,3 +51,6 @@ bool validateScenario(const Scenario& sc, std::string& err);
 
 // Escribe la solución en el formato de la sección 3.2.
 void writeSolution(std::ostream& out, const Solution& sol);
+
+// Escribe un escenario en el formato de entrada (seccion 3.2).
+void writeScenario(std::ostream& out, const Scenario& sc);

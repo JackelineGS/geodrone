@@ -108,11 +108,15 @@ app.post('/api/min-autonomy', async (req, res) => {
 app.get('/api/meta/:name', async (req, res) => {
   const { name } = req.params;
   if (!/^[A-Za-z0-9_-]+$/.test(name)) return res.status(400).json({ error: 'nombre invalido' });
-  try {
-    res.type('application/json').send(await fs.readFile(path.join(DATA_DIR, name, 'meta.json'), 'utf8'));
-  } catch {
-    res.status(404).json({ error: 'sin metadatos' });
+  // distrito_estaciones.txt usa los metadatos de distrito/: se prueba el nombre y luego el prefijo
+  for (const carpeta of [name, name.split('_')[0]]) {
+    try {
+      return res.type('application/json').send(await fs.readFile(path.join(DATA_DIR, carpeta, 'meta.json'), 'utf8'));
+    } catch {
+      /* se prueba el siguiente */
+    }
   }
+  res.status(404).json({ error: 'sin metadatos' });
 });
 
 app.listen(3001, '127.0.0.1', () => {

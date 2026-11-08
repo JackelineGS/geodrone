@@ -129,6 +129,7 @@ def main():
     ap.add_argument("--distrito", default="data/distrito/distrito.csv")
     ap.add_argument("--salida", default="data/distrito.txt")
     ap.add_argument("--meta", default="data/distrito/meta.json")
+    ap.add_argument("--contorno", default="data/distrito/contorno.txt", help="contorno del distrito para el motor")
     ap.add_argument("--A", type=float, default=None, help="autonomia (por defecto, la de la Tabla 2)")
     ap.add_argument("--seed", type=int, default=2026)
     args = ap.parse_args()
@@ -249,12 +250,15 @@ def main():
     with open(args.meta, "w") as f:
         json.dump(meta, f, ensure_ascii=False)
 
+    with open(args.contorno, "w") as f:  # contorno en el formato del motor: DISTRICT n + n lineas "x y"
+        f.write(f"DISTRICT {len(d_int)}\n" + "\n".join(f"{x} {y}" for x, y in d_int) + "\n")
+
     print(f"Categoria {categoria}: coordenadas hasta {maxc} m, A = {A:g}")
     print(f"Base ({nombre_base}): ({base[0]}, {base[1]})")
     print(f"{len(poligonos)} zonas, {sum(len(p) for _, _, p in poligonos)} vertices en total; contorno del distrito: {len(d_int)} puntos")
     for a in avisos:
         print("  aviso:", a)
-    print(f"Escrito: {args.salida} y {args.meta}")
+    print(f"Escrito: {args.salida}, {args.meta} y {args.contorno}")
 
 
 if __name__ == "__main__":

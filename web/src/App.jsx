@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { parseScenario, parseSolution } from './lib/parser';
 import MapView from './components/MapView';
 import LeafletMap from './components/LeafletMap';
@@ -11,10 +11,17 @@ async function getText(url) {
   return r.text();
 }
 
+// Cambia el valor de A en la linea "A <autonomia> KAPPA ..." del escenario
+function withAutonomy(text, a) {
+  if (a === null || !text) return text;
+  return text.replace(/^A\s+\S+/m, `A ${a}`);
+}
+
 export default function App() {
   const [names, setNames] = useState(['ejemplo.txt']);
   const [name, setName] = useState('ejemplo.txt');
-  const [text, setText] = useState('');
+  const [baseText, setText] = useState('');
+  const [autonomy, setAutonomy] = useState(null); // null = usar la A del archivo
   const [scenario, setScenario] = useState(null);
   const [solution, setSolution] = useState(null);
   const [stderr, setStderr] = useState('');
@@ -26,6 +33,11 @@ export default function App() {
   const [showReach, setShowReach] = useState(true);
   const [meta, setMeta] = useState(null);
   const [view, setView] = useState('plano');
+
+  // Texto que se envia al motor: el del archivo, con la autonomia elegida
+  const fileA = scenario ? scenario.params.A : 0;
+  const currentA = autonomy ?? fileA;
+  const text = useMemo(() => withAutonomy(baseText, autonomy), [baseText, autonomy]);
 
   // Lista de escenarios disponibles
   useEffect(() => {
@@ -43,6 +55,7 @@ export default function App() {
       .then((t) => {
         if (cancelled) return;
         setText(t);
+        setAutonomy(null);
         setScenario(parseScenario(t));
       })
       .catch((e) => !cancelled && setError(String(e)));
@@ -97,6 +110,12 @@ export default function App() {
       cancelled = true;
     };
   }, [name]);
+
+  function changeA(v) {
+    setAutonomy(v);
+    setSolution(null); // la ruta calculada era para la A anterior
+    setNote('');
+  }
 
   function choose(newName) {
     setName(newName);
@@ -202,6 +221,25 @@ export default function App() {
           )}
 
           <h2>Alcance</h2>
+          <div className="autonomy">
+            <label>
+              Autonomía A{' '}
+              <input
+                type="number"
+                min="0"
+                step="100"
+                value={currentA}
+                onChange={(e) => changeA(Number(e.target.value) || 0)}
+              />
+            </label>
+            <div className="presets">
+              {[1000, 2000, 3000, 4000, 5000].map((v) => (
+                <button key={v} className={currentA === v ? 'on' : ''} onClick={() => changeA(v)}>
+                  {v}
+                </button>
+              ))}
+            </div>
+          </div>
           {!reach && <p>Sin datos de alcance (¿API apagada?).</p>}
           {reach && (
             <>

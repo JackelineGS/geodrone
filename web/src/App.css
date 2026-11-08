@@ -39,3 +39,8 @@ main > div { min-width: 0; }
 .mk-client { background: #2563eb; border-radius: 50%; }
 .mk-client.mk-bad { background: #dc2626; }
 .mk-station { background: #16a34a; border-radius: 6px; }
+
+.autonomy input { width: 90px; padding: 4px 6px; border: 1px solid #d1d5db; border-radius: 6px; font: inherit; }
+.presets { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 8px; }
+.presets button { padding: 3px 8px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; font: inherit; font-size: .85rem; cursor: pointer; }
+.presets button.on { background: #2563eb; color: #fff; border-color: #1d4ed8; }

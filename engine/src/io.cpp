@@ -202,3 +202,21 @@ void writeSolution(std::ostream& out, const Solution& sol) {
         out << "\n";
     }
 }
+
+void writeScenario(std::ostream& out, const Scenario& sc) {
+    out << std::setprecision(10);
+    out << "SEED " << sc.seed << "\n";
+    out << "CATEGORY " << sc.category << "\n";
+    out << sc.clients.size() << " " << sc.stations.size() << " " << sc.polygons.size() << "\n";
+    out << "A " << sc.drone.autonomy << " KAPPA " << sc.drone.kappa << " V " << sc.drone.v << " Q " << sc.drone.Q
+        << " TAU " << sc.drone.tau << " KH " << sc.drone.kh << "\n";
+    out << "BASE " << sc.base.x << " " << sc.base.y << "\n";
+    for (const Client& c : sc.clients)
+        out << "CLIENT " << c.id << " " << c.p.x << " " << c.p.y << " " << c.prio << " " << (c.mandatory ? 1 : 0) << " "
+            << c.e << " " << c.l << " " << c.s << " " << c.demand << "\n";
+    for (const Station& s : sc.stations) out << "STATION " << s.id << " " << s.p.x << " " << s.p.y << "\n";
+    for (const Polygon& poly : sc.polygons) {
+        out << "POLYGON " << poly.id << " " << poly.v.size() << "\n";
+        for (const Point& v : poly.v) out << v.x << " " << v.y << "\n";
+    }
+}
