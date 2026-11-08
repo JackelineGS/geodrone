@@ -11,6 +11,11 @@ async function getText(url) {
   return r.text();
 }
 
+// Quita las estaciones del texto del escenario y pone m = 0 en la linea "k m p"
+function withoutStations(text) {
+  return text.replace(/^STATION .*\r?\n/gm, '').replace(/^(\d+) \d+ (\d+)[ \t\r]*$/m, '$1 0 $2');
+}
+
 // Cambia el valor de A en la linea "A <autonomia> KAPPA ..." del escenario
 function withAutonomy(text, a) {
   if (a === null || !text) return text;
@@ -33,6 +38,8 @@ export default function App() {
   const [showReach, setShowReach] = useState(true);
   const [meta, setMeta] = useState(null);
   const [view, setView] = useState('plano');
+  const [plan, setPlan] = useState(null); // ultimo plan de estaciones calculado
+  const [planning, setPlanning] = useState(false);
 
   // Texto que se envia al motor: el del archivo, con la autonomia elegida
   const fileA = scenario ? scenario.params.A : 0;
@@ -117,12 +124,55 @@ export default function App() {
     setNote('');
   }
 
+  // Set Cover en el motor: calcula las estaciones necesarias para la A actual
+  async function planStations() {
+    setPlanning(true);
+    setError('');
+    setNote('');
+    try {
+      const district = name.replace('.txt', '').split('_')[0];
+      const r = await fetch(`/api/plan-stations?district=${encodeURIComponent(district)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: withoutStations(text),
+      });
+      const data = await r.json();
+      if (!r.ok || !data.scenario) throw new Error(data.error || `HTTP ${r.status}`);
+      setText(data.scenario);
+      setAutonomy(null);
+      setScenario(parseScenario(data.scenario));
+      setSolution(null);
+      setPlan({
+        A: currentA,
+        count: data.stations.length,
+        radius: data.radius,
+        grid: data.gridPoints,
+        covered: data.covered,
+        uncovered: data.uncovered,
+      });
+    } catch (e) {
+      setError(`No se pudieron calcular las estaciones: ${e.message}`);
+    } finally {
+      setPlanning(false);
+    }
+  }
+
+  function removeStations() {
+    const t = withoutStations(text);
+    setText(t);
+    setAutonomy(null);
+    setScenario(parseScenario(t));
+    setSolution(null);
+    setPlan(null);
+  }
+
   function choose(newName) {
     setName(newName);
     setSolution(null);
     setStderr('');
     setNote('');
     setError('');
+    setPlan(null);
   }
 
   async function solve() {
@@ -240,6 +290,28 @@ export default function App() {
               ))}
             </div>
           </div>
+          {meta && (
+            <div className="planner">
+              <button className="primary" onClick={planStations} disabled={planning}>
+                {planning ? 'Calculando…' : 'Calcular estaciones'}
+              </button>
+              {scenario.stations.length > 0 && (
+                <button onClick={removeStations} disabled={planning}>
+                  Quitar estaciones
+                </button>
+              )}
+              {plan && (
+                <p>
+                  <b>{plan.count} estaciones</b> para A = {plan.A} (radio {Math.round(plan.radius)} m): cubren{' '}
+                  {plan.covered} de {plan.grid} puntos de la malla
+                  {plan.uncovered > 0 ? `; ${plan.uncovered} quedan sin cubrir` : ''}.
+                </p>
+              )}
+              {plan && plan.A !== currentA && (
+                <p className="warn">Cambiaste A después de calcular: vuelve a calcular las estaciones.</p>
+              )}
+            </div>
+          )}
           {!reach && <p>Sin datos de alcance (¿API apagada?).</p>}
           {reach && (
             <>

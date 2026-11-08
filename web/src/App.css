@@ -44,3 +44,9 @@ main > div { min-width: 0; }
 .presets { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 8px; }
 .presets button { padding: 3px 8px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; font: inherit; font-size: .85rem; cursor: pointer; }
 .presets button.on { background: #2563eb; color: #fff; border-color: #1d4ed8; }
+
+.planner { margin: 8px 0 12px; }
+.planner button { padding: 6px 10px; margin: 0 6px 6px 0; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; font: inherit; cursor: pointer; }
+.planner button.primary { background: #2563eb; color: #fff; border-color: #1d4ed8; }
+.planner button:disabled { opacity: .6; cursor: wait; }
+.planner .warn { color: #92400e; }
