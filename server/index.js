@@ -104,6 +104,17 @@ app.post('/api/min-autonomy', async (req, res) => {
   });
 });
 
+// Metadatos del distrito (proyeccion inversa, tipos de zona, contorno) para el mapa real
+app.get('/api/meta/:name', async (req, res) => {
+  const { name } = req.params;
+  if (!/^[A-Za-z0-9_-]+$/.test(name)) return res.status(400).json({ error: 'nombre invalido' });
+  try {
+    res.type('application/json').send(await fs.readFile(path.join(DATA_DIR, name, 'meta.json'), 'utf8'));
+  } catch {
+    res.status(404).json({ error: 'sin metadatos' });
+  }
+});
+
 app.listen(3001, '127.0.0.1', () => {
   console.log('API de GeoDrone escuchando en http://127.0.0.1:3001');
 });

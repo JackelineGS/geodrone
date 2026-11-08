@@ -29,3 +29,13 @@ aside pre { white-space: pre-wrap; font-size: .8rem; background: #f3f4f6; paddin
 .reach { list-style: none; padding: 0; margin: 4px 0; font-size: .9rem; }
 .reach .ok { color: #166534; }
 .reach .bad { color: #b91c1c; font-weight: 600; }
+
+main > div { min-width: 0; }
+.viewtabs { display: flex; gap: 6px; margin-bottom: 8px; }
+.viewtabs button { padding: 5px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; font: inherit; cursor: pointer; }
+.viewtabs button.on { background: #2563eb; color: #fff; border-color: #1d4ed8; }
+.mk { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #fff; font: 600 11px sans-serif; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.5); box-sizing: border-box; }
+.mk-base { background: #111827; border-radius: 4px; }
+.mk-client { background: #2563eb; border-radius: 50%; }
+.mk-client.mk-bad { background: #dc2626; }
+.mk-station { background: #16a34a; border-radius: 6px; }

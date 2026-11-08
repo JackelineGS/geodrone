@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { parseScenario, parseSolution } from './lib/parser';
 import MapView from './components/MapView';
+import LeafletMap from './components/LeafletMap';
+import { zoneColor } from './lib/zones';
 import './App.css';
 
 async function getText(url) {
@@ -22,6 +24,8 @@ export default function App() {
   const [reach, setReach] = useState(null);
   const [minA, setMinA] = useState(null);
   const [showReach, setShowReach] = useState(true);
+  const [meta, setMeta] = useState(null);
+  const [view, setView] = useState('plano');
 
   // Lista de escenarios disponibles
   useEffect(() => {
@@ -74,6 +78,25 @@ export default function App() {
       cancelled = true;
     };
   }, [text]);
+
+  // Metadatos del distrito (proyeccion inversa, tipos de zona, contorno) para el mapa real
+  useEffect(() => {
+    let cancelled = false;
+    setMeta(null);
+    setView('plano');
+    const base = name.replace('.txt', '');
+    getText(`/api/meta/${base}`)
+      .catch(() => getText(`/data/${base}_meta.json`))
+      .then((t) => {
+        if (cancelled) return;
+        setMeta(JSON.parse(t));
+        setView('mapa');
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [name]);
 
   function choose(newName) {
     setName(newName);
@@ -138,7 +161,19 @@ export default function App() {
       {note && <p className="msg warn">{note}</p>}
 
       <main>
-        <MapView scenario={scenario} solution={solution} reach={showReach ? reach : null} />
+        <div>
+          {meta && (
+            <div className="viewtabs">
+              <button className={view === 'mapa' ? 'on' : ''} onClick={() => setView('mapa')}>Mapa</button>
+              <button className={view === 'plano' ? 'on' : ''} onClick={() => setView('plano')}>Plano</button>
+            </div>
+          )}
+          {meta && view === 'mapa' ? (
+            <LeafletMap scenario={scenario} meta={meta} solution={solution} reach={showReach ? reach : null} />
+          ) : (
+            <MapView scenario={scenario} solution={solution} reach={showReach ? reach : null} />
+          )}
+        </div>
 
         <aside>
           <h2>Resultado</h2>
@@ -186,6 +221,19 @@ export default function App() {
                 {reach.clients.map((c) => (
                   <li key={c.id} className={c.reachable ? 'ok' : 'bad'}>
                     C{c.id}: {c.reachable ? (c.direct ? 'directo' : `con recarga en ${c.via}`) : 'inalcanzable'}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {meta && view === 'mapa' && (
+            <>
+              <h2>Zonas</h2>
+              <ul className="legend">
+                {[...new Set(meta.zones.map((z) => z.tipo))].map((t) => (
+                  <li key={t}>
+                    <span className="ic" style={{ background: zoneColor(t), opacity: 0.6 }} /> {t}
                   </li>
                 ))}
               </ul>
