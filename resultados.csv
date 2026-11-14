@@ -1,0 +1,14 @@
+caso,categoria,clientes,estaciones,poligonos,estado,costo,tiempo_ms,recargas,parcial,veredicto,motivo
+medium_01.txt,Medium,95,9,14,FEASIBLE,72673.872,1831,29,SI,AC,tiempo agotado; ruta valida sin garantia de optimo
+medium_02.txt,Medium,44,9,20,FEASIBLE,41396.174,1819,16,SI,AC,tiempo agotado; ruta valida sin garantia de optimo
+medium_03.txt,Medium,22,9,27,FEASIBLE,30813.402,1825,13,SI,AC,tiempo agotado; ruta valida sin garantia de optimo
+medium_pas.txt,Medium,23,8,5,FEASIBLE,32482.140,1803,12,SI,AC,tiempo agotado; ruta valida sin garantia de optimo
+small_01.txt,Small,5,3,4,FEASIBLE,2220.499,1,1,NO,AC,
+small_02.txt,Small,6,2,1,FEASIBLE,2857.881,1,1,NO,AC,
+small_03.txt,Small,12,2,3,FEASIBLE,4837.143,903,3,SI,AC,tiempo agotado; ruta valida sin garantia de optimo
+small_04.txt,Small,6,2,5,FEASIBLE,3189.710,1,2,NO,AC,
+small_05.txt,Small,6,2,3,FEASIBLE,2434.614,1,1,NO,AC,
+small_col.txt,Small,6,2,5,FEASIBLE,2486.326,13,1,NO,AC,
+small_enc.txt,Small,7,2,5,INFEASIBLE,,13,,NO,AC,infactible correcto: hay un cliente inalcanzable
+small_lim.txt,Small,12,2,3,FEASIBLE,7083.912,912,6,SI,AC,tiempo agotado; ruta valida sin garantia de optimo
+small_pas.txt,Small,9,3,5,FEASIBLE,3407.334,23,2,NO,AC,
