@@ -224,6 +224,8 @@ static void addEnclosedClient(Scenario& sc, long long X, std::mt19937_64& g) {
 }
 
 int main(int argc, char* argv[]) {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     if (argc != 4) {
         std::cerr << "Uso: main_generator <Small|Medium|Large|Extreme> <semilla> "
                      "<aleatorio|colineal|encerrado|limite|pasillo>\n";

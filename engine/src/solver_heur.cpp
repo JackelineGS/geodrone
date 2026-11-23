@@ -61,6 +61,7 @@ public:
             return sol;
         }
         double cost = evaluate(order, nullptr);
+        tBestMs_ = elapsedMs();  // la solucion del vecino mas cercano ya es una ruta valida
         improve(order, cost);
 
         std::vector<int> stops;
@@ -81,6 +82,7 @@ public:
         sol.skipped = 0;
         sol.routes = {route};
         sol.timeMs = std::llround(elapsedMs());
+        sol.timeBestMs = std::llround(tBestMs_);
         return sol;
     }
 
@@ -88,6 +90,7 @@ private:
     using Clock = std::chrono::steady_clock;
 
     const VisibilityGraph& g_;
+    double tBestMs_ = 0.0;  // instante en que se hallo la mejor ruta
     double limitMs_;
     std::mt19937_64 rng_;
     Clock::time_point t0_;
@@ -329,6 +332,7 @@ private:
                     if (c < cost - EPS) {
                         cost = c;
                         improved = true;
+                        tBestMs_ = elapsedMs();
                     } else {
                         std::reverse(order.begin() + i, order.begin() + j + 1);
                     }
@@ -361,6 +365,7 @@ private:
                     cost = c;
                     order = cand;
                     sinMejora = 0;
+                    tBestMs_ = elapsedMs();
                 } else {
                     sinMejora++;
                 }

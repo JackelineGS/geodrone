@@ -9,6 +9,8 @@
 #include "visibility.hpp"
 
 int main(int argc, char* argv[]) {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     bool reachOnly = false, minAOnly = false, heur = false;
     const char* path = nullptr;
     for (int i = 1; i < argc; i++) {

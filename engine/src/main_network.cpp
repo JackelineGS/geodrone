@@ -9,6 +9,8 @@
 // Uso: main_network <caso1.txt> [caso2.txt ...]   -> CSV por caso (RF11 y RF12)
 // Sirve para comparar el costo de infraestructura (MST) entre escenarios.
 int main(int argc, char* argv[]) {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     if (argc < 2) {
         std::cerr << "Uso: main_network <caso1.txt> [caso2.txt ...]\n";
         return 1;

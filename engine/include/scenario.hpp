@@ -40,6 +40,8 @@ struct Solution {
     int recharges = 0;
     int skipped = 0;
     std::vector<std::vector<std::string>> routes;  // una ruta por viaje o dron: B, C#, S#, W#.#
+    long long timeBestMs = 0;  // instante (ms) en que se hallo la mejor ruta
+    long long nodes = 0;       // nodos explorados (solo el exacto)
 };
 
 // Lee un escenario. Devuelve false y llena err si el formato es inválido.
@@ -54,3 +56,4 @@ void writeSolution(std::ostream& out, const Solution& sol);
 
 // Escribe un escenario en el formato de entrada (seccion 3.2).
 void writeScenario(std::ostream& out, const Scenario& sc);
+

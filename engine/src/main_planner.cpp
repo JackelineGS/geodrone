@@ -6,6 +6,8 @@
 #include "station_planner.hpp"
 
 int main(int argc, char* argv[]) {
+  std::ios::sync_with_stdio(false);
+  std::cin.tie(nullptr);
     PlannerOptions opt;
     std::string scenarioPath, districtPath, outPath;
     bool hasA = false;
