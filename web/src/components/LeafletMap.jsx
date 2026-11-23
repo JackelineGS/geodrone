@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { resolveRoute } from '../lib/parser';
-import { makeToLatLng } from '../lib/geo';
+import { makeToLatLng, makeToXY } from '../lib/geo';
 import { zoneColor } from '../lib/zones';
 
 const ROUTE_COLORS = ['#f59e0b', '#7c3aed', '#0891b2', '#db2777', '#65a30d'];
@@ -16,7 +16,7 @@ function icon(cls, text) {
   });
 }
 
-export default function LeafletMap({ scenario, meta, solution, reach }) {
+export default function LeafletMap({ scenario, meta, solution, reach, addMode = false, onAddClient }) {
   const box = useRef(null);
   const mapRef = useRef(null);
   const layerRef = useRef(null);
@@ -118,6 +118,23 @@ export default function LeafletMap({ scenario, meta, solution, reach }) {
       fittedFor.current = meta;
     }
   }, [scenario, meta, solution, reach]);
+
+  // Modo "agregar cliente": cada clic en el mapa entrega (x, y) en metros del escenario
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !addMode || !onAddClient) return;
+    const toXY = makeToXY(meta);
+    const onClick = (e) => {
+      const { x, y } = toXY(e.latlng.lat, e.latlng.lng);
+      onAddClient(x, y);
+    };
+    map.on('click', onClick);
+    map.getContainer().style.cursor = 'crosshair';
+    return () => {
+      map.off('click', onClick);
+      map.getContainer().style.cursor = '';
+    };
+  }, [addMode, meta, onAddClient]);
 
   return <div ref={box} className="map" />;
 }
