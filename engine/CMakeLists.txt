@@ -12,7 +12,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../bin)
 include_directories(include)
 
 add_library(core src/geometry.cpp src/io.cpp src/visibility.cpp src/shortest_path.cpp
-                 src/solver_exact.cpp src/reachability.cpp src/param_search.cpp src/station_planner.cpp)
+                 src/solver_exact.cpp src/solver_heur.cpp src/judge.cpp
+                 src/reachability.cpp src/param_search.cpp src/station_planner.cpp)
 
 add_executable(main_solver src/main_solver.cpp)
 target_link_libraries(main_solver core)
@@ -20,7 +21,13 @@ target_link_libraries(main_solver core)
 add_executable(main_planner src/main_planner.cpp)
 target_link_libraries(main_planner core)
 
-foreach(t geometry io visibility shortest_path solver reachability param_search station_planner)
+add_executable(main_bench src/main_bench.cpp)
+target_link_libraries(main_bench core)
+
+add_executable(main_generator src/main_generator.cpp)
+target_link_libraries(main_generator core)
+
+foreach(t geometry io visibility shortest_path solver solver_heur reachability param_search station_planner)
   add_executable(test_${t} tests/test_${t}.cpp)
   target_link_libraries(test_${t} core)
 endforeach()

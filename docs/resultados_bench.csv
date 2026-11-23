@@ -1,0 +1,9 @@
+caso,categoria,clientes,estaciones,poligonos,estado,costo,tiempo_ms,algoritmo,memoria_mb,recargas,parcial,veredicto,motivo
+small_01.txt,Small,5,3,4,FEASIBLE,2220.499,1,exacto,3.9,1,NO,AC,
+small_01.txt,Small,5,3,4,FEASIBLE,2220.499,900,heur,4.0,1,NA,AC,
+small_pas.txt,Small,9,3,5,FEASIBLE,3407.334,12,exacto,4.1,2,NO,AC,
+small_pas.txt,Small,9,3,5,FEASIBLE,3645.837,901,heur,4.0,2,NA,AC,
+medium_04.txt,Medium,16,10,13,FEASIBLE,24181.415,1816,exacto,4.1,9,SI,AC,tiempo agotado; ruta valida sin garantia de optimo
+medium_04.txt,Medium,16,10,13,FEASIBLE,24181.415,1803,heur,4.1,9,NA,AC,
+small_enc.txt,Small,7,2,5,INFEASIBLE,,4,exacto,4.0,,NO,AC,infactible correcto: hay un cliente inalcanzable
+small_enc.txt,Small,7,2,5,INFEASIBLE,,0,heur,3.9,,NA,AC,infactible correcto: hay un cliente inalcanzable
