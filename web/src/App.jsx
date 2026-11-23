@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { parseScenario, parseSolution } from './lib/parser';
 import MapView from './components/MapView';
 import LeafletMap from './components/LeafletMap';
 import { zoneColor } from './lib/zones';
+import { clientError } from './lib/geo';
 import './App.css';
 
 async function getText(url) {
@@ -14,6 +15,30 @@ async function getText(url) {
 // Quita las estaciones del texto del escenario y pone m = 0 en la linea "k m p"
 function withoutStations(text) {
   return text.replace(/^STATION .*\r?\n/gm, '').replace(/^(\d+) \d+ (\d+)[ \t\r]*$/m, '$1 0 $2');
+}
+
+// Cambia el contador de clientes k en la linea "k m p"
+function withCount(text, delta) {
+  return text.replace(/^(\d+) (\d+) (\d+)[ \t\r]*$/m, (_, k, m, p) => `${Number(k) + delta} ${m} ${p}`);
+}
+
+// Agrega un cliente obligatorio (ventana abierta, servicio 30 s, demanda 1) tras la base o el ultimo cliente
+function withClient(text, id, x, y) {
+  const lines = text.split('\n');
+  let at = lines.findIndex((l) => l.startsWith('BASE '));
+  lines.forEach((l, i) => {
+    if (l.startsWith('CLIENT ')) at = i;
+  });
+  lines.splice(at + 1, 0, `CLIENT ${id} ${x} ${y} 1 1 0 1000000 30 1`);
+  return withCount(lines.join('\n'), 1);
+}
+
+// Quita un cliente (o todos si id es null) y ajusta k
+function withoutClient(text, id) {
+  const del = id === null ? /^CLIENT .*\r?\n/gm : new RegExp(`^CLIENT ${id} .*\\r?\\n`, 'm');
+  const find = id === null ? /^CLIENT .*$/gm : new RegExp(`^CLIENT ${id} .*$`, 'm');
+  const removed = (text.match(find) || []).length;
+  return withCount(text.replace(del, ''), -removed);
 }
 
 // Cambia el valor de A en la linea "A <autonomia> KAPPA ..." del escenario
@@ -40,6 +65,7 @@ export default function App() {
   const [view, setView] = useState('plano');
   const [plan, setPlan] = useState(null); // ultimo plan de estaciones calculado
   const [planning, setPlanning] = useState(false);
+  const [addMode, setAddMode] = useState(false); // clic en el mapa = nuevo cliente
 
   // Texto que se envia al motor: el del archivo, con la autonomia elegida
   const fileA = scenario ? scenario.params.A : 0;
@@ -117,6 +143,31 @@ export default function App() {
       cancelled = true;
     };
   }, [name]);
+
+  // Un clic del mapa agrega un cliente si el punto es valido
+  const addClient = useCallback(
+    (x, y) => {
+      const bad = clientError({ x, y }, scenario, meta);
+      if (bad) {
+        setError(bad);
+        return;
+      }
+      const id = scenario.clients.reduce((m, c) => Math.max(m, c.id), 0) + 1;
+      const t = withClient(baseText, id, x, y);
+      setError('');
+      setText(t);
+      setScenario(parseScenario(t));
+      setSolution(null);
+    },
+    [scenario, meta, baseText]
+  );
+
+  function removeClient(id) {
+    const t = withoutClient(baseText, id);
+    setText(t);
+    setScenario(parseScenario(t));
+    setSolution(null);
+  }
 
   function changeA(v) {
     setAutonomy(v);
@@ -238,7 +289,14 @@ export default function App() {
             </div>
           )}
           {meta && view === 'mapa' ? (
-            <LeafletMap scenario={scenario} meta={meta} solution={solution} reach={showReach ? reach : null} />
+            <LeafletMap
+              scenario={scenario}
+              meta={meta}
+              solution={solution}
+              reach={showReach ? reach : null}
+              addMode={addMode}
+              onAddClient={addClient}
+            />
           ) : (
             <MapView scenario={scenario} solution={solution} reach={showReach ? reach : null} />
           )}
@@ -268,6 +326,28 @@ export default function App() {
                 </details>
               )}
             </>
+          )}
+
+          {meta && view === 'mapa' && (
+            <div className="planner">
+              <button className={addMode ? 'primary' : ''} onClick={() => setAddMode(!addMode)}>
+                {addMode ? 'Listo (dejar de agregar)' : 'Agregar clientes en el mapa'}
+              </button>
+              {scenario.clients.length > 0 && (
+                <button onClick={() => removeClient(null)}>Quitar todos los clientes</button>
+              )}
+              {addMode && <p>Haz clic en el mapa para colocar un cliente.</p>}
+              <ul className="reach">
+                {scenario.clients.map((c) => (
+                  <li key={c.id}>
+                    C{c.id} ({c.x}, {c.y}){' '}
+                    <button onClick={() => removeClient(c.id)} aria-label={`Quitar C${c.id}`}>
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
           <h2>Alcance</h2>
