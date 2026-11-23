@@ -4,6 +4,7 @@
 #   gap_pct     = 100 * (costo - mejor) / mejor
 #   calidad_pct = 100 * mejor / costo
 # Uso: bash scripts/calcular_gap.sh [entrada.csv] [salida.csv]
+export LC_ALL=C
 IN=${1:-docs/resultados_bench.csv}
 OUT=${2:-docs/resultados_con_gap.csv}
 awk -F, '

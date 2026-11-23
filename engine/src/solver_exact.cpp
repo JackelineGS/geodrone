@@ -153,7 +153,7 @@ private:
 
     void dfs(int i) {
         if (truncated_) return;
-        if ((++nodes_ & 1023) == 0 && elapsedMs() > limitMs_) {
+        if ((++nodes_ & 15) == 0 && elapsedMs() > limitMs_) {
             truncated_ = true;
             return;
         }
