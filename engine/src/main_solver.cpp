@@ -5,10 +5,11 @@
 #include "reachability.hpp"
 #include "scenario.hpp"
 #include "solver_exact.hpp"
+#include "solver_heur.hpp"
 #include "visibility.hpp"
 
 int main(int argc, char* argv[]) {
-    bool reachOnly = false, minAOnly = false;
+    bool reachOnly = false, minAOnly = false, heur = false;
     const char* path = nullptr;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
@@ -16,11 +17,13 @@ int main(int argc, char* argv[]) {
             reachOnly = true;
         else if (a == "--min-autonomy")
             minAOnly = true;
+        else if (a == "--heur")
+            heur = true;
         else
             path = argv[i];
     }
     if (!path) {
-        std::cerr << "Uso: main_solver [--reach | --min-autonomy] <archivo_entrada>\n";
+        std::cerr << "Uso: main_solver [--reach | --min-autonomy | --heur] <archivo_entrada>\n";
         return 1;
     }
 
@@ -63,7 +66,7 @@ int main(int argc, char* argv[]) {
         return 2;
     }
 
-    Solution sol = solveExact(sc, g);
+    Solution sol = heur ? solveHeuristic(sc, g, 1500.0) : solveExact(sc, g);
     writeSolution(std::cout, sol);
     return sol.status == "FEASIBLE" ? 0 : 2;
 }

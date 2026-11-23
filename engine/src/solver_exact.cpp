@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "route_path.hpp"
 #include "shortest_path.hpp"
 
 namespace {
@@ -196,11 +197,7 @@ private:
 
     // Agrega los nodos del camino a -> b: puntos de paso (W) y el destino
     void appendPath(int a, int b, std::vector<std::string>& out) const {
-        std::vector<int> p = reconstructPath(sp_[a], a, b);
-        for (size_t t = 1; t < p.size(); t++) {
-            const Node& nd = g_.nodes[p[t]];
-            if (t + 1 == p.size() || nd.type == NodeType::WAYPOINT) out.push_back(nodeLabel(nd));
-        }
+        appendPathLabels(g_, sp_[a], a, b, out);
     }
 
     void emit(int i, int r, std::vector<std::string>& out, int& arrivals) const {

@@ -60,6 +60,22 @@ static Point spot(const Scenario& sc, std::mt19937_64& g, long long X) {
     }
 }
 
+// Large y Extreme usan colocacion guiada: estaciones encadenadas desde la base y clientes cerca de la red.
+static bool isGuided(const std::string& cat) { return cat == "Large" || cat == "Extreme"; }
+
+// Punto libre a distancia euclidiana <= r de c (si no hay, cae a un punto libre cualquiera)
+static Point spotNear(const Scenario& sc, std::mt19937_64& g, long long X, const Point& c, long long r) {
+    for (int t = 0; t < 1000; t++) {
+        long long x = c.x + rnd(g, -r, r), y = c.y + rnd(g, -r, r);
+        if (x < 0 || x > X || y < 0 || y > X) continue;
+        Point p{x, y};
+        double dx = (double)(p.x - c.x), dy = (double)(p.y - c.y);
+        if (dx * dx + dy * dy > (double)r * (double)r) continue;
+        if (freeSpot(sc, p)) return p;
+    }
+    return spot(sc, g, X);
+}
+
 static Scenario randomScenario(const std::string& cat, const Cfg& cfg, long long seed,
                                std::mt19937_64& g, bool wall) {
     Scenario sc;
@@ -92,15 +108,36 @@ static Scenario randomScenario(const std::string& cat, const Cfg& cfg, long long
     sc.base = spot(sc, g, X);
     int k = (int)rnd(g, cfg.kMin, cfg.kMax);
     int m = (int)rnd(g, cfg.mMin, cfg.mMax);
-    for (int i = 1; i <= k; i++) {
+    auto newClient = [&](int id, const Point& p) {
         Client c;
-        c.id = i;
-        c.p = spot(sc, g, X);
+        c.id = id;
+        c.p = p;
         c.prio = 1 + (int)rnd(g, 0, 2);
         c.mandatory = true;
         c.e = 0; c.l = 1000000; c.s = 30; c.demand = 1;
-        sc.clients.push_back(c);
+        return c;
+    };
+    if (isGuided(cat)) {
+        // 1) estaciones encadenadas: cada una cerca (<= 0.45 A) de la base o de otra estacion ya puesta
+        std::vector<Point> chargers{sc.base};
+        long long hop = (long long)(0.45 * cfg.A);
+        for (int i = 1; i <= m; i++) {
+            const Point& from = chargers[(size_t)rnd(g, 0, (long long)chargers.size() - 1)];
+            Station s;
+            s.id = i;
+            s.p = spotNear(sc, g, X, from, hop);
+            sc.stations.push_back(s);
+            chargers.push_back(s.p);
+        }
+        // 2) clientes cerca (<= 0.28 A) de algun punto de recarga: ida y vuelta cabe en la bateria
+        long long rc = (long long)(0.28 * cfg.A);
+        for (int i = 1; i <= k; i++) {
+            const Point& from = chargers[(size_t)rnd(g, 0, (long long)chargers.size() - 1)];
+            sc.clients.push_back(newClient(i, spotNear(sc, g, X, from, rc)));
+        }
+        return sc;
     }
+    for (int i = 1; i <= k; i++) sc.clients.push_back(newClient(i, spot(sc, g, X)));
     for (int i = 1; i <= m; i++) {
         Station s;
         s.id = i;
@@ -121,7 +158,8 @@ static bool allReachable(const Scenario& sc) {
 static Scenario makeReachable(const std::string& cat, const Cfg& cfg, long long seed,
                               std::mt19937_64& g, bool wall) {
     Scenario sc;
-    for (int t = 0; t < 200; t++) {
+    int tries = isGuided(cat) ? 10 : 200;  // en Large/Extreme cada intento es caro y casi siempre el 1ro sirve
+    for (int t = 0; t < tries; t++) {
         sc = randomScenario(cat, cfg, seed, g, wall);
         if (allReachable(sc)) return sc;
     }
@@ -129,13 +167,28 @@ static Scenario makeReachable(const std::string& cat, const Cfg& cfg, long long 
     return sc;
 }
 
-// caso colineal, clientes sobre vertices y sobre aristas de los edificios
-static void alignClients(Scenario& sc) {
+// caso colineal, clientes sobre vertices y sobre aristas de los edificios.
+// maxDist > 0 (Large/Extreme): solo se usan puntos a distancia <= maxDist de la base o de una estacion,
+// asi el cliente movido sigue siendo alcanzable. Con maxDist = 0 no hay filtro (Small/Medium).
+static void alignClients(Scenario& sc, double maxDist) {
+    auto near = [&](const Point& q) {
+        if (maxDist <= 0) return true;
+        double lim = maxDist * maxDist;
+        auto d2 = [&](const Point& c) {
+            double dx = (double)(q.x - c.x), dy = (double)(q.y - c.y);
+            return dx * dx + dy * dy;
+        };
+        if (d2(sc.base) <= lim) return true;
+        for (const Station& s : sc.stations)
+            if (d2(s.p) <= lim) return true;
+        return false;
+    };
     size_t ci = 0;
     for (const Polygon& poly : sc.polygons) {
-        if (ci < sc.clients.size()) sc.clients[ci++].p = poly.v[0];
-        if (ci < sc.clients.size())
-            sc.clients[ci++].p = Point{(poly.v[0].x + poly.v[1].x) / 2, poly.v[0].y};
+        Point a = poly.v[0];
+        Point b{(poly.v[0].x + poly.v[1].x) / 2, poly.v[0].y};
+        if (ci < sc.clients.size() && near(a)) sc.clients[ci++].p = a;
+        if (ci < sc.clients.size() && near(b)) sc.clients[ci++].p = b;
     }
 }
 
@@ -190,7 +243,7 @@ int main(int argc, char* argv[]) {
         sc = makeReachable(cat, cfg, seed, g, true);
     } else if (kind == "colineal") {
         sc = makeReachable(cat, cfg, seed, g, false);
-        alignClients(sc);
+        alignClients(sc, isGuided(cat) ? 0.25 * cfg.A : 0.0);
     } else if (kind == "encerrado") {
         sc = makeReachable(cat, cfg, seed, g, false);
         addEnclosedClient(sc, cfg.X, g);
