@@ -72,7 +72,9 @@ int main(int argc, char* argv[]) {
     for (const ClientReach& c : analyzeReachability(sc, g).clients)
         if (!c.reachable) reach = false;
 
-    double limit = 0.9 * tmaxMs(sc.category);
+    // El limite del solver es lo que queda del presupuesto: lectura, grafo y alcanzabilidad ya gastaron tiempo.
+    double pre = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
+    double limit = std::max(50.0, 0.9 * tmaxMs(sc.category) - pre);
     Solution sol;
     if (reach) sol = (algo == "exacto") ? solveExact(sc, g, limit) : solveHeuristic(sc, g, limit);
     double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();

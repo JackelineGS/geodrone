@@ -13,7 +13,8 @@ include_directories(include)
 
 add_library(core src/geometry.cpp src/io.cpp src/visibility.cpp src/shortest_path.cpp
                  src/solver_exact.cpp src/solver_heur.cpp src/judge.cpp
-                 src/reachability.cpp src/param_search.cpp src/station_planner.cpp)
+                 src/reachability.cpp src/param_search.cpp src/station_planner.cpp
+                 src/graph_analysis.cpp)
 
 add_executable(main_solver src/main_solver.cpp)
 target_link_libraries(main_solver core)
@@ -27,7 +28,10 @@ target_link_libraries(main_bench core)
 add_executable(main_generator src/main_generator.cpp)
 target_link_libraries(main_generator core)
 
-foreach(t geometry io visibility shortest_path solver solver_heur reachability param_search station_planner)
+add_executable(main_network src/main_network.cpp)
+target_link_libraries(main_network core)
+
+foreach(t geometry io visibility shortest_path solver solver_heur reachability param_search station_planner graph_analysis)
   add_executable(test_${t} tests/test_${t}.cpp)
   target_link_libraries(test_${t} core)
 endforeach()

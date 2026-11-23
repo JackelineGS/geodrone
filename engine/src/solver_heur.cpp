@@ -336,7 +336,9 @@ private:
         }
         // Fase B: busqueda local aleatoria (2-opt, mover segmento, intercambio)
         std::vector<int> cand;
-        while (!timeUp()) {
+        long long sinMejora = 0;                        // intentos seguidos sin mejorar
+        const long long maxSinMejora = 3000LL * k_;     // parada por estancamiento
+        while (!timeUp() && sinMejora < maxSinMejora) {
             for (int rep = 0; rep < 32; rep++) {
                 cand = order;
                 int type = (int)(rng_() % 3);
@@ -358,6 +360,9 @@ private:
                 if (c < cost - EPS) {
                     cost = c;
                     order = cand;
+                    sinMejora = 0;
+                } else {
+                    sinMejora++;
                 }
             }
         }
