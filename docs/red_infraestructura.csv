@@ -1,7 +1,0 @@
-caso,categoria,estaciones,nodos_red,aristas_red,componentes,conexa,n_articulaciones,articulaciones,costo_mst
-ejemplo.txt,Small,1,2,1,1,SI,0,,8.991
-sin_estacion.txt,Small,0,1,0,1,SI,0,,0.000
-small_01.txt,Small,3,4,6,1,SI,0,,2245.187
-medium_01.txt,Medium,9,10,27,1,SI,0,,12373.360
-large_01.txt,Large,10,11,55,1,SI,0,,7138.391
-extreme_01.txt,Extreme,89,90,2821,1,SI,0,,50203.218
