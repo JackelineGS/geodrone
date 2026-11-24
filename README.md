@@ -1,4 +1,4 @@
-# GeoDrone Challenge (Avance 2)
+# GeoDrone Challenge
 
 Motor en C++17 para planificar misiones de entrega con un dron: lee un escenario
 (base, clientes, estaciones de recarga y edificios), construye un grafo de visibilidad
