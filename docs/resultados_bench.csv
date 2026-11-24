@@ -1,0 +1,113 @@
+caso,categoria,clientes,estaciones,poligonos,estado,costo,tiempo_ms,algoritmo,memoria_mb,recargas,parcial,veredicto,motivo,tipo,semilla,t_mejor_ms,nodos_explorados
+extreme_01.txt,Extreme,695,89,186,FEASIBLE,193612.436,9018,exacto,27.4,44,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,1,4337,496
+extreme_01.txt,Extreme,695,89,186,FEASIBLE,192585.996,9001,heur,25.4,44,NA,AC,,aleatorio,1,8102,
+extreme_02.txt,Extreme,800,75,251,FEASIBLE,246813.930,9051,exacto,33.8,56,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,2,4634,592
+extreme_02.txt,Extreme,800,75,251,FEASIBLE,242915.527,9001,heur,31.7,56,NA,AC,,aleatorio,2,7775,
+extreme_03.txt,Extreme,919,78,261,FEASIBLE,207964.070,9018,exacto,41.4,48,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,3,4566,528
+extreme_03.txt,Extreme,919,78,261,FEASIBLE,206667.732,9002,heur,38.8,48,NA,AC,,aleatorio,3,7520,
+extreme_col.txt,Extreme,437,59,139,FEASIBLE,159296.748,9046,exacto,14.8,35,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,colineal,4,5029,1056
+extreme_col.txt,Extreme,437,59,139,FEASIBLE,158462.162,9001,heur,14.1,35,NA,AC,,colineal,4,8577,
+extreme_enc.txt,Extreme,801,75,255,INFEASIBLE,,1243,exacto,7.7,,NO,AC,infactible correcto: hay un cliente inalcanzable,encerrado,2,,
+extreme_enc.txt,Extreme,801,75,255,INFEASIBLE,,1212,heur,7.7,,NA,AC,infactible correcto: hay un cliente inalcanzable,encerrado,2,,
+extreme_lim.txt,Extreme,919,78,261,FEASIBLE,266561.778,9133,exacto,41.3,89,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,limite,3,4583,544
+extreme_lim.txt,Extreme,919,78,261,FEASIBLE,244829.434,9006,heur,38.9,85,NA,AC,,limite,3,7653,
+extreme_pas.txt,Extreme,801,63,5,FEASIBLE,251983.076,9005,exacto,28.9,56,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,pasillo,5,5312,736
+extreme_pas.txt,Extreme,801,63,5,FEASIBLE,246114.161,9003,heur,26.5,55,NA,AC,,pasillo,5,8505,
+large_01.txt,Large,201,10,50,FEASIBLE,46268.758,4504,exacto,6.6,13,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,1,2248,6320
+large_01.txt,Large,201,10,50,FEASIBLE,46268.758,3261,heur,6.5,13,NA,AC,,aleatorio,1,2274,
+large_02.txt,Large,250,11,35,FEASIBLE,55108.466,4500,exacto,7.3,16,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,2,2127,17920
+large_02.txt,Large,250,11,35,FEASIBLE,55108.466,3572,heur,7.1,16,NA,AC,,aleatorio,2,2124,
+large_03.txt,Large,253,11,82,FEASIBLE,51265.984,4501,exacto,7.8,15,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,3,2203,19056
+large_03.txt,Large,253,11,82,FEASIBLE,51265.984,3715,heur,7.5,15,NA,AC,,aleatorio,3,2187,
+large_04.txt,Large,294,42,52,FEASIBLE,89979.926,4519,exacto,8.9,26,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,4,2601,448
+large_04.txt,Large,294,42,52,FEASIBLE,88949.486,4500,heur,8.6,25,NA,AC,,aleatorio,4,4393,
+large_05.txt,Large,180,13,79,FEASIBLE,43537.114,4505,exacto,6.6,12,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,5,2249,14112
+large_05.txt,Large,180,13,79,FEASIBLE,43383.233,4450,heur,6.5,12,NA,AC,,aleatorio,5,3449,
+large_col.txt,Large,294,42,52,FEASIBLE,88669.813,4511,exacto,8.8,25,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,colineal,4,2294,832
+large_col.txt,Large,294,42,52,FEASIBLE,88571.248,4500,heur,8.5,25,NA,AC,,colineal,4,3862,
+large_enc.txt,Large,251,11,39,INFEASIBLE,,50,exacto,5.4,,NO,AC,infactible correcto: hay un cliente inalcanzable,encerrado,2,,
+large_enc.txt,Large,251,11,39,INFEASIBLE,,48,heur,5.3,,NA,AC,infactible correcto: hay un cliente inalcanzable,encerrado,2,,
+large_lim.txt,Large,253,11,82,FEASIBLE,64096.781,4501,exacto,7.8,28,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,limite,3,2553,18672
+large_lim.txt,Large,253,11,82,FEASIBLE,63447.563,4500,heur,7.7,28,NA,AC,,limite,3,4148,
+large_pas.txt,Large,101,26,5,FEASIBLE,51959.112,4501,exacto,4.8,15,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,pasillo,5,291,10624
+large_pas.txt,Large,101,26,5,FEASIBLE,51959.112,641,heur,4.7,15,NA,AC,,pasillo,5,290,
+medium_01.txt,Medium,95,9,14,FEASIBLE,64471.464,1800,exacto,4.7,25,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,1,233,52832
+medium_01.txt,Medium,95,9,14,FEASIBLE,64471.464,548,heur,4.7,25,NA,AC,,aleatorio,1,230,
+medium_02.txt,Medium,44,9,20,FEASIBLE,40696.597,1801,exacto,4.4,15,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,2,6,151616
+medium_02.txt,Medium,44,9,20,FEASIBLE,40696.597,98,heur,4.4,15,NA,AC,,aleatorio,2,5,
+medium_03.txt,Medium,22,9,27,FEASIBLE,25759.514,1801,exacto,4.2,10,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,3,2,85520
+medium_03.txt,Medium,22,9,27,FEASIBLE,25759.514,40,heur,4.3,10,NA,AC,,aleatorio,3,2,
+medium_04.txt,Medium,16,10,13,FEASIBLE,24181.415,1800,exacto,4.2,9,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,4,1,93408
+medium_04.txt,Medium,16,10,13,FEASIBLE,24181.415,23,heur,4.1,9,NA,AC,,aleatorio,4,1,
+medium_05.txt,Medium,46,10,15,FEASIBLE,45276.172,1800,exacto,4.4,17,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,5,17,118864
+medium_05.txt,Medium,46,10,15,FEASIBLE,45276.172,115,heur,4.3,17,NA,AC,,aleatorio,5,15,
+medium_06.txt,Medium,75,10,10,FEASIBLE,52231.290,1801,exacto,4.5,20,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,6,35,47936
+medium_06.txt,Medium,75,10,10,FEASIBLE,52231.290,241,heur,4.4,20,NA,AC,,aleatorio,6,35,
+medium_07.txt,Medium,19,9,16,FEASIBLE,22520.489,1800,exacto,4.2,9,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,7,61,74000
+medium_07.txt,Medium,19,9,16,FEASIBLE,22549.722,34,heur,4.2,9,NA,AC,,aleatorio,7,4,
+medium_08.txt,Medium,48,9,23,FEASIBLE,37058.801,1800,exacto,4.4,14,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,8,45,110880
+medium_08.txt,Medium,48,9,23,FEASIBLE,37058.801,145,heur,4.4,14,NA,AC,,aleatorio,8,44,
+medium_09.txt,Medium,43,10,26,FEASIBLE,38580.814,1801,exacto,4.3,15,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,9,15,127232
+medium_09.txt,Medium,43,10,26,FEASIBLE,38580.814,103,heur,4.4,15,NA,AC,,aleatorio,9,11,
+medium_10.txt,Medium,76,10,21,FEASIBLE,57897.671,1801,exacto,4.6,21,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,10,143,43424
+medium_10.txt,Medium,76,10,21,FEASIBLE,57897.671,356,heur,4.7,21,NA,AC,,aleatorio,10,139,
+medium_11.txt,Medium,25,8,24,FEASIBLE,33299.223,1800,exacto,4.2,12,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,11,2,140624
+medium_11.txt,Medium,25,8,24,FEASIBLE,33299.223,45,heur,4.2,12,NA,AC,,aleatorio,11,2,
+medium_12.txt,Medium,45,10,7,FEASIBLE,37296.519,1800,exacto,4.2,14,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,12,55,85952
+medium_12.txt,Medium,45,10,7,FEASIBLE,37296.519,134,heur,4.2,14,NA,AC,,aleatorio,12,45,
+medium_13.txt,Medium,49,9,12,FEASIBLE,45394.300,1800,exacto,4.4,17,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,13,18,112624
+medium_13.txt,Medium,49,9,12,FEASIBLE,45394.300,119,heur,4.4,17,NA,AC,,aleatorio,13,14,
+medium_14.txt,Medium,18,8,17,FEASIBLE,30064.541,1801,exacto,4.2,12,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,14,30,328000
+medium_14.txt,Medium,18,8,17,FEASIBLE,30560.257,29,heur,4.2,11,NA,AC,,aleatorio,14,1,
+medium_15.txt,Medium,36,10,29,FEASIBLE,33310.411,1800,exacto,4.2,12,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,15,11,95184
+medium_15.txt,Medium,36,10,29,FEASIBLE,33310.411,83,heur,4.2,12,NA,AC,,aleatorio,15,11,
+medium_16.txt,Medium,60,8,25,FEASIBLE,49074.903,1800,exacto,4.5,18,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,16,60,96144
+medium_16.txt,Medium,60,8,25,FEASIBLE,49074.903,206,heur,4.5,18,NA,AC,,aleatorio,16,60,
+medium_col.txt,Medium,16,10,13,FEASIBLE,18407.590,1800,exacto,4.1,7,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,colineal,4,183,110512
+medium_col.txt,Medium,16,10,13,FEASIBLE,18672.017,19,heur,4.1,7,NA,AC,,colineal,4,1,
+medium_enc.txt,Medium,45,9,24,INFEASIBLE,,13,exacto,4.4,,NO,AC,infactible correcto: hay un cliente inalcanzable,encerrado,2,,
+medium_enc.txt,Medium,45,9,24,INFEASIBLE,,10,heur,4.3,,NA,AC,infactible correcto: hay un cliente inalcanzable,encerrado,2,,
+medium_lim.txt,Medium,22,9,27,FEASIBLE,29389.240,1800,exacto,4.1,12,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,limite,3,6,121744
+medium_lim.txt,Medium,22,9,27,FEASIBLE,29389.240,45,heur,4.2,12,NA,AC,,limite,3,6,
+medium_pas.txt,Medium,23,8,5,FEASIBLE,32482.140,1800,exacto,4.1,12,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,pasillo,4,37,330688
+medium_pas.txt,Medium,23,8,5,FEASIBLE,33119.319,36,heur,4.2,13,NA,AC,,pasillo,4,2,
+small_01.txt,Small,5,3,4,FEASIBLE,2220.499,2,exacto,4.1,1,NO,AC,,aleatorio,1,0,29
+small_01.txt,Small,5,3,4,FEASIBLE,2220.499,2,heur,4.2,1,NA,AC,,aleatorio,1,0,
+small_02.txt,Small,6,2,1,FEASIBLE,2857.881,7,exacto,4.1,1,NO,AC,,aleatorio,2,0,204
+small_02.txt,Small,6,2,1,FEASIBLE,2857.881,3,heur,4.1,1,NA,AC,,aleatorio,2,0,
+small_03.txt,Small,12,2,3,FEASIBLE,4837.143,900,exacto,4.1,3,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,3,20,722208
+small_03.txt,Small,12,2,3,FEASIBLE,4845.390,10,heur,4.1,3,NA,AC,,aleatorio,3,1,
+small_04.txt,Small,6,2,5,FEASIBLE,3189.710,7,exacto,4.1,2,NO,AC,,aleatorio,4,3,297
+small_04.txt,Small,6,2,5,FEASIBLE,3289.696,3,heur,4.0,2,NA,AC,,aleatorio,4,0,
+small_05.txt,Small,6,2,3,FEASIBLE,2434.614,3,exacto,4.2,1,NO,AC,,aleatorio,5,0,36
+small_05.txt,Small,6,2,3,FEASIBLE,2434.614,3,heur,4.1,1,NA,AC,,aleatorio,5,0,
+small_06.txt,Small,8,3,1,FEASIBLE,3176.476,5,exacto,4.1,2,NO,AC,,aleatorio,6,4,241
+small_06.txt,Small,8,3,1,FEASIBLE,3448.884,4,heur,4.1,2,NA,AC,,aleatorio,6,0,
+small_07.txt,Small,9,2,5,FEASIBLE,1996.775,7,exacto,4.1,1,NO,AC,,aleatorio,7,0,729
+small_07.txt,Small,9,2,5,FEASIBLE,1996.775,5,heur,4.1,1,NA,AC,,aleatorio,7,0,
+small_08.txt,Small,12,3,5,FEASIBLE,4268.908,900,exacto,4.1,3,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,8,2,497056
+small_08.txt,Small,12,3,5,FEASIBLE,4268.908,10,heur,4.1,3,NA,AC,,aleatorio,8,2,
+small_09.txt,Small,12,2,4,FEASIBLE,3806.767,900,exacto,4.2,2,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,aleatorio,9,0,423872
+small_09.txt,Small,12,2,4,FEASIBLE,3806.767,8,heur,4.2,2,NA,AC,,aleatorio,9,0,
+small_10.txt,Small,5,3,5,FEASIBLE,2486.888,7,exacto,4.1,1,NO,AC,,aleatorio,10,0,42
+small_10.txt,Small,5,3,5,FEASIBLE,2486.888,3,heur,4.1,1,NA,AC,,aleatorio,10,0,
+small_11.txt,Small,8,2,2,FEASIBLE,3376.541,8,exacto,4.0,2,NO,AC,,aleatorio,11,6,704
+small_11.txt,Small,8,2,2,FEASIBLE,3763.169,8,heur,4.2,2,NA,AC,,aleatorio,11,0,
+small_12.txt,Small,9,2,5,FEASIBLE,4596.598,158,exacto,3.9,3,NO,AC,,aleatorio,12,15,267596
+small_12.txt,Small,9,2,5,FEASIBLE,4645.468,6,heur,4.0,3,NA,AC,,aleatorio,12,0,
+small_13.txt,Small,8,2,2,FEASIBLE,3013.913,11,exacto,4.0,2,NO,AC,,aleatorio,13,6,592
+small_13.txt,Small,8,2,2,FEASIBLE,3031.780,10,heur,4.1,2,NA,AC,,aleatorio,13,0,
+small_14.txt,Small,10,1,3,FEASIBLE,2429.399,42,exacto,4.1,1,NO,AC,,aleatorio,14,0,28806
+small_14.txt,Small,10,1,3,FEASIBLE,2429.399,5,heur,4.1,1,NA,AC,,aleatorio,14,0,
+small_15.txt,Small,5,2,2,FEASIBLE,3244.340,11,exacto,4.0,2,NO,AC,,aleatorio,15,2,19
+small_15.txt,Small,5,2,2,FEASIBLE,3460.979,2,heur,4.0,2,NA,AC,,aleatorio,15,0,
+small_16.txt,Small,8,2,1,FEASIBLE,3662.897,6,exacto,4.1,2,NO,AC,,aleatorio,16,0,693
+small_16.txt,Small,8,2,1,FEASIBLE,3662.897,5,heur,4.2,2,NA,AC,,aleatorio,16,0,
+small_col.txt,Small,6,2,5,FEASIBLE,2486.326,4,exacto,4.1,1,NO,AC,,colineal,4,0,329
+small_col.txt,Small,6,2,5,FEASIBLE,2486.326,3,heur,4.2,1,NA,AC,,colineal,4,0,
+small_enc.txt,Small,7,2,5,INFEASIBLE,,1,exacto,4.1,,NO,AC,infactible correcto: hay un cliente inalcanzable,encerrado,2,,
+small_enc.txt,Small,7,2,5,INFEASIBLE,,0,heur,4.1,,NA,AC,infactible correcto: hay un cliente inalcanzable,encerrado,2,,
+small_lim.txt,Small,12,2,3,FEASIBLE,7083.912,900,exacto,4.1,6,SI,AC,tiempo agotado; ruta valida sin garantia de optimo,limite,3,0,1916176
+small_lim.txt,Small,12,2,3,FEASIBLE,7083.912,10,heur,4.1,6,NA,AC,,limite,3,0,
+small_pas.txt,Small,9,3,5,FEASIBLE,3407.334,13,exacto,4.1,2,NO,AC,,pasillo,5,5,4856
+small_pas.txt,Small,9,3,5,FEASIBLE,3645.837,5,heur,4.2,2,NA,AC,,pasillo,5,0,

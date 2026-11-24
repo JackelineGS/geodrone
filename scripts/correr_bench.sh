@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+export LC_ALL=C
 # Corre el bench con los dos algoritmos sobre cada caso y arma un solo CSV.
 # Un proceso por caso y algoritmo, para que memoria_mb sea el pico de ese caso.
 # Uso (desde la raiz del proyecto):  bash scripts/correr_bench.sh [caso1.txt caso2.txt ...]

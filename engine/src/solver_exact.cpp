@@ -25,7 +25,7 @@ struct Parent {
 
 class Search {
 public:
-    Search(const Scenario& sc, const VisibilityGraph& g, double limitMs)
+    Search(const Scenario& sc, const VisibilityGraph& g, double limitMs, const Solution* inc)
         : g_(g), limitMs_(limitMs), t0_(Clock::now()) {
         k_ = (int)sc.clients.size();
         m_ = (int)sc.stations.size();
@@ -49,6 +49,12 @@ public:
         P_.assign(k_ + 2, 0.0);
         SV_.assign(k_ + 2, 0.0);
         used_.assign(k_ + 1, false);
+        // Ítem 1: inicializar con la solucion del heuristico
+        if (inc && inc->status == "FEASIBLE" && inc->routes.size() == 1 && !inc->routes[0].empty()) {
+            best_ = inc->cost;
+            bestRoute_ = inc->routes[0];
+            bestRecharges_ = inc->recharges;
+        }
     }
 
     Solution run() {
@@ -71,6 +77,8 @@ public:
             sol.routes = {bestRoute_};
         }
         sol.timeMs = std::llround(elapsedMs());
+        sol.timeBestMs = std::llround(tBestMs_);
+        sol.nodes = nodes_;
         return sol;
     }
 
@@ -95,6 +103,7 @@ private:
     std::vector<std::string> bestRoute_;
     int bestRecharges_ = 0;
     long long nodes_ = 0;
+    double tBestMs_ = 0.0;
     bool truncated_ = false;
 
     double elapsedMs() const { return std::chrono::duration<double, std::milli>(Clock::now() - t0_).count(); }
@@ -161,6 +170,7 @@ private:
             double c = G_[k_][0];
             if (c < best_ - EPS) {
                 best_ = c;
+                tBestMs_ = elapsedMs();
                 reconstruct();
             }
             return;
@@ -234,7 +244,7 @@ private:
 
 }  // namespace
 
-Solution solveExact(const Scenario& sc, const VisibilityGraph& g, double timeLimitMs) {
-    Search s(sc, g, timeLimitMs);
+Solution solveExact(const Scenario& sc, const VisibilityGraph& g, double timeLimitMs, const Solution* incumbent) {
+    Search s(sc, g, timeLimitMs, incumbent);
     return s.run();
 }

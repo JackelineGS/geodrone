@@ -1,4 +1,11 @@
 #pragma once
+
+// Geometria plana exacta (coordenadas enteras long long, plano euclidiano 2D).
+// Complejidad temporal: orient, cross, onSegment, segmentsIntersect, properCross y dist son O(1).
+//   locatePoint y segmentValid son O(v), con v = vertices del poligono.
+// Complejidad espacial: O(1) auxiliar.
+// Aplicabilidad: poligonos simples (convexos o concavos) con vertices en sentido antihorario.
+//   Los predicados son exactos mientras cross no desborde long long (coordenadas del orden de 1e9).
 #include <vector>
 
 struct Point {

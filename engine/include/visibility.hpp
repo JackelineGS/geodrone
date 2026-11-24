@@ -1,4 +1,12 @@
 #pragma once
+
+// Grafo de visibilidad entre base, clientes, estaciones y vertices de poligonos.
+// Sea V = 1 + k + m + W nodos (W = vertices de poligonos) y E aristas.
+// Complejidad temporal: construccion O(V^2 * W) si cada par se prueba contra todas las aristas
+//   de obstaculos (O(V^3) en el peor caso); cada poligono tiene una caja envolvente precalculada.
+// Complejidad espacial: O(V + E), con E <= V^2.
+// Aplicabilidad: obstaculos poligonales simples; una arista es valida si el vuelo recto no entra
+//   al interior de ningun poligono (rozar un vertice o recorrer una arista es valido).
 #include <string>
 #include <vector>
 

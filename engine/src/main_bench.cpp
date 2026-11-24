@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 #include "judge.hpp"
 #include "reachability.hpp"
@@ -39,11 +40,28 @@ static double peakMemMb() {
 
 static const char* HEADER =
     "caso,categoria,clientes,estaciones,poligonos,estado,costo,tiempo_ms,algoritmo,memoria_mb,"
-    "recargas,parcial,veredicto,motivo";
+    "recargas,parcial,veredicto,motivo,tipo,semilla,t_mejor_ms,nodos_explorados";
+    
+    // Tipo del caso a partir del nombre: small_col -> colineal; small_01 -> aleatorio
+static std::string tipoCaso(const std::string& name) {
+    std::string base = name.substr(0, name.find_last_of('.'));
+    if (base.size() >= 4) {
+        std::string suf = base.substr(base.size() - 4);
+        if (suf == "_col") return "colineal";
+        if (suf == "_enc") return "encerrado";
+        if (suf == "_lim") return "limite";
+        if (suf == "_pas") return "pasillo";
+    }
+    return "aleatorio";
+}
 
 // Uso: main_bench [--no-header] <exacto|heur> <caso.txt>
 // Un caso y un algoritmo por proceso: asi memoria_mb es el pico real de ese caso.
 int main(int argc, char* argv[]) {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+	
     bool header = true;
     int a = 1;
     if (a < argc && std::string(argv[a]) == "--no-header") {
@@ -63,7 +81,7 @@ int main(int argc, char* argv[]) {
     std::string err;
     if (!readScenarioFile(path, sc, err) || !validateScenario(sc, err)) {
         std::replace(err.begin(), err.end(), ',', ';');  // una coma rompe el CSV
-        std::cout << name << ",,,,,,,," << algo << ",,,,RE," << err << "\n";
+        std::cout << name << ",,,,,,,," << algo << ",,,,RE," << err << ",,,,\n";
         return 0;
     }
     VisibilityGraph g = buildVisibilityGraph(sc);
@@ -76,14 +94,35 @@ int main(int argc, char* argv[]) {
     double pre = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
     double limit = std::max(50.0, 0.9 * tmaxMs(sc.category) - pre);
     Solution sol;
-    if (reach) sol = (algo == "exacto") ? solveExact(sc, g, limit) : solveHeuristic(sc, g, limit);
+    double exactLimit = limit;  // presupuesto real que recibe el exacto
+    long long tBest = 0;        // instante (ms desde el inicio del solver) de la mejor ruta
+    long long nodes = -1;       // solo el exacto lo reporta
+     if (reach) {
+        if (algo == "exacto") {
+            // Ítem 1: el heuristico corre primero con una parte del presupuesto y su ruta
+            // se le pasa al exacto como cota superior inicial.
+            const char* fe = std::getenv("FRAC_HEUR");
+			double frac = fe ? std::atof(fe) : 0.6;
+			Solution h = solveHeuristic(sc, g, std::max(20.0, frac * limit));
+            exactLimit = std::max(50.0, limit - (double)h.timeMs);
+            sol = solveExact(sc, g, exactLimit, &h);
+            // Si el B&B mejoro la ruta, su instante se suma al tiempo que ya gasto el heuristico.
+            // Si no, la mejor ruta sigue siendo la del heuristico.
+            bool improved = (h.status != "FEASIBLE") || (sol.cost < h.cost - 1e-9);
+            tBest = improved ? h.timeMs + sol.timeBestMs : h.timeBestMs;
+            nodes = sol.nodes;
+        } else {
+            sol = solveHeuristic(sc, g, limit);
+            tBest = sol.timeBestMs;
+        }
+    }
     double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
     double mem = peakMemMb();
 
     std::string status = reach ? sol.status : "INFEASIBLE";
     // "parcial" solo tiene sentido para el exacto: se agoto el tiempo sin probar optimalidad.
     // El heuristico no promete optimo, asi que se marca NA.
-    std::string partial = algo == "heur" ? "NA" : ((reach && sol.timeMs >= (long long)limit) ? "SI" : "NO");
+    std::string partial = algo == "heur" ? "NA" : ((reach && sol.timeMs >= (long long)exactLimit) ? "SI" : "NO");
     std::string verdict, reason;
 
     if (!reach) {
@@ -115,6 +154,10 @@ int main(int argc, char* argv[]) {
     if (status == "FEASIBLE") std::cout << std::fixed << std::setprecision(3) << sol.cost;
     std::cout << "," << std::llround(ms) << "," << algo << "," << std::fixed << std::setprecision(1) << mem << ",";
     if (status == "FEASIBLE") std::cout << sol.recharges;
-    std::cout << "," << partial << "," << verdict << "," << reason << "\n";
+    std::cout << "," << partial << "," << verdict << "," << reason << "," << tipoCaso(name) << "," << sc.seed << ",";
+    if (status == "FEASIBLE") std::cout << tBest;
+    std::cout << ",";
+    if (nodes >= 0) std::cout << nodes;
+    std::cout << "\n";
     return 0;
 }
