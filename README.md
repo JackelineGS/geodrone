@@ -3,81 +3,46 @@
 Motor en C++17 para planificar misiones de entrega con un dron: lee un escenario
 (base, clientes, estaciones de recarga y edificios), construye un grafo de visibilidad
 y calcula la ruta de menor costo respetando los edificios y la batería.
+Incluye un solver exacto (branch and bound con programación dinámica de recargas), un heurístico,
+un verificador independiente, un generador de casos y un benchmark reproducible.
 
 ## Estructura
 
-| `engine/include/`, `engine/src/` | Código del motor: geometría, grafo de visibilidad, caminos mínimos (Dijkstra), DFS, solver exacto (branch and bound) |
-| `engine/src/main_solver.cpp` | Programa que resuelve un escenario |
-| `engine/src/main_generator.cpp` | Generador de escenarios con semilla (aleatorios y adversariales) |
+| Carpeta / archivo | Contenido |
+|---|---|
+| `engine/include/`, `engine/src/` | Motor: geometría, grafo de visibilidad, caminos mínimos, alcanzabilidad, autonomía mínima, planificador de estaciones, solver exacto y heurístico |
+| `engine/src/main_*.cpp` | Programas: `main_solver`, `main_generator`, `main_bench`, `main_planner`, `main_network` |
 | `engine/src/judge.cpp` | Verificador de rutas, independiente del solver |
-| `engine/src/main_bench.cpp` | Benchmark: corre varios casos y genera una tabla CSV |
 | `engine/tests/` | Pruebas unitarias de cada módulo |
+| `server/` | Servidor Node.js que expone el motor |
+| `web/` | Interfaz web (Vite) |
+| `scripts/` | `generar_datasets.sh`, `correr_bench.sh`, `calcular_gap.sh`, `resumen_bench.sh` |
 | `data/` | Escenarios de ejemplo; `data/gen/` guarda los generados |
-| `docs/formato_entrada.txt` | Formato de los archivos de entrada |
+| `docs/` | Formato de entrada, imagen de arquitectura y resultados del benchmark |
+
+## Arquitectura
+
+![Arquitectura de GeoDrone](docs/Arqui_Geodrone.jpeg)
+
+Flujo del motor:
+
+1. **Lectura y validación** del escenario (`io`).
+2. **Grafo de visibilidad** (`visibility`): nodos de base, clientes, estaciones y vértices de edificios; una arista existe si el vuelo recto no entra al interior de ningún obstáculo.
+3. **Caminos mínimos** (`shortest_path`): Dijkstra desde cada nodo de interés.
+4. **Alcanzabilidad** (`reachability`): detecta clientes encerrados o fuera de la red de recarga (caso INFEASIBLE).
+5. **Solvers**:
+   - `solver_heur`: vecino más cercano + mejora local (2-opt y búsqueda aleatoria), reproducible por semilla.
+   - `solver_exact`: branch and bound sobre el orden de clientes, con programación dinámica para elegir dónde recargar. Puede arrancar desde la ruta del heurístico como cota superior inicial.
+6. **Juez** (`judge`): verifica la ruta sin usar el solver (visibilidad de cada tramo, autonomía y visita de todos los clientes).
 
 ## Compilar
 
-Requiere `g++` con soporte de C++17 (en Windows, MSYS2 UCRT64). Desde la raíz del proyecto:
+Requiere `g++` con C++17 y CMake. En Ubuntu, desde la raíz del proyecto:
 
 ```bash
-mkdir -p bin
-SRC="engine/src/geometry.cpp engine/src/io.cpp engine/src/visibility.cpp engine/src/shortest_path.cpp engine/src/solver_exact.cpp engine/src/reachability.cpp engine/src/param_search.cpp engine/src/station_planner.cpp engine/src/judge.cpp"
-
-g++ -std=c++17 -O2 -Iengine/include engine/src/main_solver.cpp    $SRC -o bin/main_solver.exe
-g++ -std=c++17 -O2 -Iengine/include engine/src/main_generator.cpp $SRC -o bin/main_generator.exe
-g++ -std=c++17 -O2 -Iengine/include engine/src/main_bench.cpp     $SRC -o bin/main_bench.exe
+cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
+cmake --build engine/build -j
 ```
 
-En Linux o macOS se puede quitar el `.exe`.
+Los ejecutables quedan en `bin/`.
 
-## Uso
-
-**Resolver un escenario**
-
-```bash
-./bin/main_solver.exe data/ejemplo.txt
-```
-
-Salida esperada: `STATUS FEASIBLE`, `COST 27.605` y la ruta `B C2 C1 S1 W1.1 B`.
-`B` es la base, `C#` un cliente, `S#` una estación y `W#.#` una esquina de edificio usada como punto de paso.
-
-**Generar escenarios**
-
-```bash
-./bin/main_generator.exe <categoria> <semilla> <tipo> > archivo.txt
-```
-
-- `categoria`: `Small`, `Medium`, `Large` o `Extreme`.
-- `semilla`: número entero. La misma semilla produce siempre el mismo archivo.
-- `tipo`: `aleatorio`, `colineal`, `encerrado`, `limite` o `pasillo`.
-
-Ejemplo: `./bin/main_generator.exe Small 1 aleatorio > data/gen/small_01.txt`
-
-**Benchmark**
-
-```bash
-./bin/main_bench.exe data/gen/*.txt > resultados.csv
-```
-
-Por cada caso resuelve el escenario, verifica la ruta de forma independiente y escribe
-una fila con: estado, costo, tiempo, recargas, si el solver agotó su tiempo (`parcial`) y el veredicto.
-
-| Veredicto | Significado |
-|---|---|
-| AC | Ruta válida y dentro del tiempo (o infactibilidad detectada correctamente) |
-| WA | La ruta no pasa el verificador |
-| TLE | Excede el tiempo máximo de la categoría (Small 1 s, Medium 2 s, Large 5 s, Extreme 10 s) |
-| RE | No se pudo leer el archivo |
-
-**Pruebas unitarias** (ejemplo con la de geometría; hay una por módulo en `engine/tests/`)
-
-```bash
-g++ -std=c++17 -O2 -Iengine/include engine/tests/test_geometry.cpp $SRC -o bin/test_geometry.exe
-./bin/test_geometry.exe
-```
-
-## Notas
-
-- El solver exacto devuelve el óptimo en casos pequeños. Con muchos clientes agota su tiempo
-  límite y entrega la mejor ruta encontrada (`parcial = SI`), sin garantía de óptimo.
-- La carpeta `web/` y `server/` contienen una visualización opcional; no son necesarias para el motor.

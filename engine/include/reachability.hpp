@@ -1,4 +1,12 @@
 #pragma once
+
+// Alcanzabilidad de clientes (seccion 3.4).
+// Complejidad temporal: DFS sobre la red de recarga O(m^2) mas una consulta por cliente sobre
+//   distancias minimas; el costo dominante es el calculo de caminos minimos en el grafo
+//   (R Dijkstra: O(R (V + E) log V), R = m + 1; el DFS cuesta O(R^2) y los clientes O(k R)).
+// Complejidad espacial: O(V + k + m).
+// Aplicabilidad: un cliente es alcanzable si hay ida y vuelta directa desde la base, o si llega
+//   a una red de recarga conectada a la base (radio A / (2 kappa)).
 #include <string>
 #include <vector>
 

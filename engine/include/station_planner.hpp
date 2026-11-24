@@ -1,4 +1,12 @@
 #pragma once
+
+// Planificador de estaciones (Set Cover voraz).
+// Sea G el numero de puntos de la malla del distrito y S las estaciones elegidas.
+// Complejidad temporal: malla O(G W); caminos minimos O(nf (V + E) log V); matriz de entrada F O(G nf^2);
+//   cobertura O(G^2); voraz O(S G^2). Aqui G = puntos de la malla, nf = nodos fijos, W = vertices de poligonos.
+// Complejidad espacial: O(G) para la malla y la cobertura, mas la red de caminos minimos.
+// Aplicabilidad: heuristico voraz con aproximacion logaritmica, no optimo. Cada estacion debe
+//   quedar conectada a la red de recarga de la base; el resultado depende del paso de la malla.
 #include <string>
 #include <vector>
 

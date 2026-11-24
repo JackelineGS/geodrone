@@ -1,4 +1,11 @@
 #pragma once
+
+// Busqueda de la autonomia minima factible (RF10).
+// Complejidad temporal: O(log((hi - lo) / eps)) evaluaciones de factibilidad; cada evaluacion
+//   cuesta lo de missionFeasible (alcanzabilidad), con tope de 100 iteraciones.
+// Complejidad espacial: O(1) adicional.
+// Aplicabilidad: valida porque la factibilidad es monotona en A (si A sirve, cualquier A' > A
+//   tambien). Resuelve para una base y un dron; eps por defecto 1e-6.
 #include <string>
 
 #include "scenario.hpp"
